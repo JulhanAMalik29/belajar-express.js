@@ -1,22 +1,51 @@
 const express = require('express');
+const jsxEngine = require('jsx-view-engine');
 const app = express();
 const port = 3000;
 
+app.set('views', './views');
+app.set('view engine', 'jsx');
+
+app.engine('jsx', jsxEngine());
+
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  const mahasiswa = [
+    {
+      nama: 'Julhan Abdul Malik',
+      email: 'julhan@gmail.com',
+    },
+    {
+      nama: 'Abdul',
+      email: 'abdul@gmail.com',
+    },
+    {
+      nama: 'malik',
+      email: 'malik@gmail.com',
+    },
+  ];
+
+  res.render('Home', {
+    name: 'Julhan Abdul Malik',
+    title: 'Halaman Home',
+    mahasiswa,
+  });
 });
 
 app.get('/about', (req, res) => {
-  res.sendFile(__dirname + '/about.html');
+  res.render('About', { title: 'Halaman About' });
 });
 
 app.get('/contact', (req, res) => {
-  res.sendFile(__dirname + '/contact.html');
+  res.render('Contact', { title: 'Halaman Contact' });
 });
 
 // contoh link: http://localhost:3000/product/10?category=Shoes
 app.get('/product/:id', (req, res) => {
-  res.send(`Product ID: ${req.params.id} <br> Category: ${req.query.category}`);
+  res.render('Product', {
+    title: 'Halaman Product',
+    id: req.params.id,
+    category: req.query.category,
+  });
 });
 
 app.use((req, res) => {

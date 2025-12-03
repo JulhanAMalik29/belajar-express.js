@@ -4,13 +4,16 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js --ext js,jsx"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "express": "^4.17.1",
-    "nodemon": "^3.1.11"
+    "jsx-view-engine": "^1.0.0",
+    "nodemon": "^3.1.11",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
