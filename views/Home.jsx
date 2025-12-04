@@ -6,7 +6,7 @@ function Home({ name, title, mahasiswa, children }) {
     <MainLayout title={title}>
       <h2>Halo, {name}!</h2>
 
-      <h2>List Mahasiswa</h2>
+      <h3>List Mahasiswa</h3>
 
       {mahasiswa.length === 0 ? (
         <p>Tidak ada data mahasiswa.</p>

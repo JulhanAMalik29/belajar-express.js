@@ -12,14 +12,13 @@ export default function MainLayout({ title, children }) {
           crossOrigin="anonymous"
         />
 
-        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="/css/style.css" />
         <title>{title}</title>
       </head>
 
       <body>
         <Navbar />
-
-        {children}
+        <div className="container mt-3">{children}</div>
 
         <script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

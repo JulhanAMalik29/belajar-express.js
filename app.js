@@ -1,6 +1,6 @@
 const express = require('express');
 const jsxEngine = require('jsx-view-engine');
-const morgan = require('morgan');
+const { loadContacts, findContact } = require('./utils/contacts');
 
 const app = express();
 const port = 3000;
@@ -10,16 +10,15 @@ app.set('view engine', 'jsx');
 
 // Third-Party Middleware
 app.engine('jsx', jsxEngine());
-app.use(morgan('dev'));
 
 // Build-in Middleware
 app.use(express.static('public'));
 
 // Application-level Middleware
-app.use((req, res, next) => {
-  console.log('Time:', Date.now());
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log('Time:', Date.now());
+//   next();
+// });
 
 app.get('/', (req, res) => {
   const mahasiswa = [
@@ -49,16 +48,13 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-  res.render('Contact', { title: 'Halaman Contact' });
+  const contacts = loadContacts();
+  res.render('Contact', { title: 'Halaman Contact', contacts });
 });
 
-// contoh link: http://localhost:3000/product/10?category=Shoes
-app.get('/product/:id', (req, res) => {
-  res.render('Product', {
-    title: 'Halaman Product',
-    id: req.params.id,
-    category: req.query.category,
-  });
+app.get('/contact/:nama', (req, res) => {
+  const contact = findContact(req.params.nama);
+  res.render('DetailContact', { title: 'Halaman Detail Contact', contact });
 });
 
 app.use((req, res) => {
@@ -67,5 +63,5 @@ app.use((req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on http://localhost:${port}`);
 });

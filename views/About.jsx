@@ -9,7 +9,7 @@ export default function About({ title }) {
         <div className="row">
           <div className="col text-center">
             <img
-              src="img/julhan.jpg"
+              src="/img/julhan.jpg"
               alt="Julhan Abdul Malik"
               className="img-thumbnail rounded-circle"
               width="200"
