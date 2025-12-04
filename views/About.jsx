@@ -11,7 +11,7 @@ export default function About({ title }) {
             <img
               src="/img/julhan.jpg"
               alt="Julhan Abdul Malik"
-              className="img-thumbnail rounded-circle"
+              className="img-thumbnail rounded-circle mb-3"
               width="200"
             />
             <h1>Julhan Abdul Malik</h1>

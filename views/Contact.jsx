@@ -1,12 +1,34 @@
 import React from 'react';
 import MainLayout from './MainLayout';
 
-export default function Contact({ title, contacts }) {
+export default function Contact({
+  title,
+  contacts,
+  successMessage,
+  errorMessage,
+}) {
   return (
     <MainLayout title={title}>
       <div className="row">
         <div className="col-md-6">
           <h2>{title}</h2>
+
+          <a href="/contact/add" className="btn btn-primary m-3">
+            Tambah Contact
+          </a>
+
+          {successMessage.length > 0 && (
+            <div className="alert alert-success" role="alert">
+              {successMessage}
+            </div>
+          )}
+
+          {errorMessage.length > 0 && (
+            <div className="alert alert-danger" role="alert">
+              {errorMessage}
+            </div>
+          )}
+
           <table className="table table-dark">
             <thead>
               <tr>

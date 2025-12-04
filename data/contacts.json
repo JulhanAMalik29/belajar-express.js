@@ -1,17 +1,1 @@
-[
-  {
-    "nama": "Julhan Abdul Malik",
-    "nohp": "081234567890",
-    "email": "julhan@gmail.com"
-  },
-  {
-    "nama": "Abdul",
-    "nohp": "089876543210",
-    "email": "abdul@gmail.com"
-  },
-  {
-    "nama": "Malik",
-    "nohp": "087654321098",
-    "email": "malik@gmail.com"
-  }
-]
+[{"nama":"Julhan Abdul Malik","nohp":"081234567890","email":"julhan@gmail.com"},{"nama":"Abdul","nohp":"089876543210","email":"abdul@gmail.com"},{"nama":"Malik","nohp":"087654321098","email":"malik@gmail.com"},{"nama":"Abdul Malik","nohp":"085312456325","email":"abdulmalik@gmail.com"},{"nama":"Coba","nohp":"08563252015","email":"coba@coba.com"}]

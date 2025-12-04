@@ -1,6 +1,16 @@
 const express = require('express');
 const jsxEngine = require('jsx-view-engine');
-const { loadContacts, findContact } = require('./utils/contacts');
+const {
+  loadContacts,
+  findContact,
+  AddContact,
+  cekDuplikatNama,
+} = require('./utils/contacts');
+const { validationResult, body, check } = require('express-validator');
+
+// Flash Message
+const session = require('express-session');
+const flash = require('connect-flash');
 
 const app = express();
 const port = 3000;
@@ -13,12 +23,34 @@ app.engine('jsx', jsxEngine());
 
 // Build-in Middleware
 app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
 
 // Application-level Middleware
 // app.use((req, res, next) => {
 //   console.log('Time:', Date.now());
 //   next();
 // });
+
+// Flash Message Middleware
+// Session Middleware
+app.use(
+  session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+// Flash Middleware
+app.use(flash());
+
+// Middleware untuk Flash Message bisa diakses dari semua view
+app.use((req, res, next) => {
+  res.locals.successMessage = req.flash('success');
+  res.locals.errorMessage = req.flash('error');
+
+  next();
+});
 
 app.get('/', (req, res) => {
   const mahasiswa = [
@@ -50,6 +82,44 @@ app.get('/about', (req, res) => {
 app.get('/contact', (req, res) => {
   const contacts = loadContacts();
   res.render('Contact', { title: 'Halaman Contact', contacts });
+});
+
+// Fungsi untuk Menangani POST request pada /contact
+app.post(
+  '/contact',
+  [
+    body('nama').custom((value) => {
+      const duplikat = cekDuplikatNama(value);
+
+      if (duplikat) {
+        throw new Error('Nama contact sudah digunakan!');
+      }
+      return true;
+    }),
+    check('email', 'Email tidak valid!').isEmail(),
+    check('nohp', 'No HP tidak valid!').isMobilePhone('id-ID'),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.render('AddContact', {
+        title: 'Halaman Tambah Contact',
+        errors: errors.array(),
+      });
+    } else {
+      AddContact(req.body);
+
+      // Flash Message
+      req.flash('success', 'Contact berhasil ditambahkan!');
+
+      res.redirect('/contact');
+    }
+  }
+);
+
+app.get('/contact/add', (req, res) => {
+  res.render('AddContact', { title: 'Halaman Tambah Contact' });
 });
 
 app.get('/contact/:nama', (req, res) => {
