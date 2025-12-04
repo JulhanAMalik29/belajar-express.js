@@ -5,6 +5,8 @@ const {
   findContact,
   AddContact,
   cekDuplikatNama,
+  deleteContact,
+  editContact,
 } = require('./utils/contacts');
 const { validationResult, body, check } = require('express-validator');
 
@@ -112,7 +114,6 @@ app.post(
 
       // Flash Message
       req.flash('success', 'Contact berhasil ditambahkan!');
-
       res.redirect('/contact');
     }
   }
@@ -121,6 +122,64 @@ app.post(
 app.get('/contact/add', (req, res) => {
   res.render('AddContact', { title: 'Halaman Tambah Contact' });
 });
+
+app.get('/contact/delete/:nama', (req, res) => {
+  const contact = findContact(req.params.nama);
+
+  if (!contact) {
+    res.status(404);
+    res.send('404 Not Found');
+  } else {
+    deleteContact(req.params.nama);
+
+    // Flash Message
+    req.flash('success', 'Contact berhasil dihapus!');
+    res.redirect('/contact');
+  }
+});
+
+app.get('/contact/edit/:nama', (req, res) => {
+  const contact = findContact(req.params.nama);
+  if (!contact) {
+    res.status(404);
+    res.send('404 Not Found');
+  } else {
+    res.render('EditContact', { title: 'Halaman Edit Contact', contact });
+  }
+});
+
+app.post(
+  '/contact/update',
+  [
+    body('nama').custom((value, { req }) => {
+      const duplikat = cekDuplikatNama(value);
+
+      if (value !== req.body.oldNama && duplikat) {
+        throw new Error('Nama contact sudah digunakan!');
+      }
+      return true;
+    }),
+    check('email', 'Email tidak valid!').isEmail(),
+    check('nohp', 'No HP tidak valid!').isMobilePhone('id-ID'),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.render('EditContact', {
+        title: 'Halaman Update Contact',
+        errors: errors.array(),
+        contact: req.body,
+      });
+    } else {
+      editContact(req.body);
+
+      // Flash Message
+      req.flash('success', 'Contact berhasil diperbarui!');
+      res.redirect('/contact');
+    }
+  }
+);
 
 app.get('/contact/:nama', (req, res) => {
   const contact = findContact(req.params.nama);

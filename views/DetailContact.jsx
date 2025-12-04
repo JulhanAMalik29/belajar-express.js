@@ -33,10 +33,24 @@ export default function DetailContact({ title, contact }) {
                   <li className="list-group-item bg-dark text-white">
                     {contact.email}
                   </li>
-                  <li className="list-group-item bg-dark border-0 text-end">
+                  <li className="list-group-item bg-dark border-0 d-flex justify-content-between">
                     <a href="/contact" className="btn btn-outline-light btn-sm">
-                      &laquo; Kembali
+                      Kembali
                     </a>
+                    <div className="aksi d-flex gap-2">
+                      <a
+                        href={`/contact/edit/${contact.nama}`}
+                        className="btn btn-outline-primary btn-sm"
+                      >
+                        Edit
+                      </a>
+                      <a
+                        href={`/contact/delete/${contact.nama}`}
+                        className="btn btn-outline-danger btn-sm"
+                      >
+                        Delete
+                      </a>
+                    </div>
                   </li>
                 </>
               )}
