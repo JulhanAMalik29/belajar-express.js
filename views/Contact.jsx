@@ -1,5 +1,5 @@
 import React from 'react';
-import MainLayout from './main-layout';
+import MainLayout from './MainLayout';
 
 export default function About({ title }) {
   return (

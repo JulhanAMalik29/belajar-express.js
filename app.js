@@ -1,12 +1,25 @@
 const express = require('express');
 const jsxEngine = require('jsx-view-engine');
+const morgan = require('morgan');
+
 const app = express();
 const port = 3000;
 
 app.set('views', './views');
 app.set('view engine', 'jsx');
 
+// Third-Party Middleware
 app.engine('jsx', jsxEngine());
+app.use(morgan('dev'));
+
+// Build-in Middleware
+app.use(express.static('public'));
+
+// Application-level Middleware
+app.use((req, res, next) => {
+  console.log('Time:', Date.now());
+  next();
+});
 
 app.get('/', (req, res) => {
   const mahasiswa = [
