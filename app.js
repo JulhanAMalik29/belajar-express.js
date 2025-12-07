@@ -10,6 +10,10 @@ const {
 } = require('./utils/contacts');
 const { validationResult, body, check } = require('express-validator');
 
+// Database MongoDB Connection
+require('./utils/mongo-db-contact');
+const Contact = require('./model/contact');
+
 // Flash Message
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -81,8 +85,8 @@ app.get('/about', (req, res) => {
   res.render('About', { title: 'Halaman About' });
 });
 
-app.get('/contact', (req, res) => {
-  const contacts = loadContacts();
+app.get('/contact', async (req, res) => {
+  const contacts = await Contact.find();
   res.render('Contact', { title: 'Halaman Contact', contacts });
 });
 
@@ -181,8 +185,8 @@ app.post(
   }
 );
 
-app.get('/contact/:nama', (req, res) => {
-  const contact = findContact(req.params.nama);
+app.get('/contact/:nama', async (req, res) => {
+  const contact = await Contact.findOne({ nama: req.params.nama });
   res.render('DetailContact', { title: 'Halaman Detail Contact', contact });
 });
 
