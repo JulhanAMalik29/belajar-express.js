@@ -19,7 +19,8 @@ export default function EditContact({ title, errors, contact }) {
           )}
 
           <h3 className="mt-4">Form Edit Contact</h3>
-          <form action="/contact/update" method="POST" className="p-3">
+          <form action="/contact?_method=PUT" method="POST" className="p-3">
+            <input type="hidden" name="_id" defaultValue={contact._id} />
             <input
               type="hidden"
               name="oldNama"

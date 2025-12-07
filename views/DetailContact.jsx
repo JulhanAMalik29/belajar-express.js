@@ -44,12 +44,15 @@ export default function DetailContact({ title, contact }) {
                       >
                         Edit
                       </a>
-                      <a
-                        href={`/contact/delete/${contact.nama}`}
-                        className="btn btn-outline-danger btn-sm"
-                      >
-                        Delete
-                      </a>
+                      <form action="/contact?_method=DELETE" method="POST">
+                        <input type="hidden" name="nama" value={contact.nama} />
+                        <button
+                          type="submit"
+                          className="btn btn-outline-danger btn-sm"
+                        >
+                          Delete
+                        </button>
+                      </form>
                     </div>
                   </li>
                 </>

@@ -1,14 +1,7 @@
 const express = require('express');
 const jsxEngine = require('jsx-view-engine');
-const {
-  loadContacts,
-  findContact,
-  AddContact,
-  cekDuplikatNama,
-  deleteContact,
-  editContact,
-} = require('./utils/contacts');
 const { validationResult, body, check } = require('express-validator');
+const methodOverride = require('method-override');
 
 // Database MongoDB Connection
 require('./utils/mongo-db-contact');
@@ -20,6 +13,9 @@ const flash = require('connect-flash');
 
 const app = express();
 const port = 3000;
+
+// Method Override Middleware
+app.use(methodOverride('_method'));
 
 app.set('views', './views');
 app.set('view engine', 'jsx');
@@ -85,17 +81,22 @@ app.get('/about', (req, res) => {
   res.render('About', { title: 'Halaman About' });
 });
 
+// CONTACT ROUTES
 app.get('/contact', async (req, res) => {
   const contacts = await Contact.find();
   res.render('Contact', { title: 'Halaman Contact', contacts });
+});
+
+app.get('/contact/add', (req, res) => {
+  res.render('AddContact', { title: 'Halaman Tambah Contact' });
 });
 
 // Fungsi untuk Menangani POST request pada /contact
 app.post(
   '/contact',
   [
-    body('nama').custom((value) => {
-      const duplikat = cekDuplikatNama(value);
+    body('nama').custom(async (value) => {
+      const duplikat = await Contact.findOne({ nama: value });
 
       if (duplikat) {
         throw new Error('Nama contact sudah digunakan!');
@@ -114,36 +115,27 @@ app.post(
         errors: errors.array(),
       });
     } else {
-      AddContact(req.body);
-
-      // Flash Message
-      req.flash('success', 'Contact berhasil ditambahkan!');
-      res.redirect('/contact');
+      // Tambahkan contact
+      Contact.insertMany(req.body).then(() => {
+        // Flash Message
+        req.flash('success', 'Contact berhasil ditambahkan!');
+        res.redirect('/contact');
+      });
     }
   }
 );
 
-app.get('/contact/add', (req, res) => {
-  res.render('AddContact', { title: 'Halaman Tambah Contact' });
-});
-
-app.get('/contact/delete/:nama', (req, res) => {
-  const contact = findContact(req.params.nama);
-
-  if (!contact) {
-    res.status(404);
-    res.send('404 Not Found');
-  } else {
-    deleteContact(req.params.nama);
-
+app.delete('/contact', (req, res) => {
+  Contact.deleteOne({ nama: req.body.nama }).then(() => {
     // Flash Message
     req.flash('success', 'Contact berhasil dihapus!');
     res.redirect('/contact');
-  }
+  });
 });
 
-app.get('/contact/edit/:nama', (req, res) => {
-  const contact = findContact(req.params.nama);
+app.get('/contact/edit/:nama', async (req, res) => {
+  const contact = await Contact.findOne({ nama: req.params.nama });
+
   if (!contact) {
     res.status(404);
     res.send('404 Not Found');
@@ -152,11 +144,11 @@ app.get('/contact/edit/:nama', (req, res) => {
   }
 });
 
-app.post(
-  '/contact/update',
+app.put(
+  '/contact',
   [
-    body('nama').custom((value, { req }) => {
-      const duplikat = cekDuplikatNama(value);
+    body('nama').custom(async (value, { req }) => {
+      const duplikat = await Contact.findOne({ nama: value });
 
       if (value !== req.body.oldNama && duplikat) {
         throw new Error('Nama contact sudah digunakan!');
@@ -176,11 +168,21 @@ app.post(
         contact: req.body,
       });
     } else {
-      editContact(req.body);
-
-      // Flash Message
-      req.flash('success', 'Contact berhasil diperbarui!');
-      res.redirect('/contact');
+      // Update contact
+      Contact.updateOne(
+        { _id: req.body._id },
+        {
+          $set: {
+            nama: req.body.nama,
+            nohp: req.body.nohp,
+            email: req.body.email,
+          },
+        }
+      ).then(() => {
+        // Flash Message
+        req.flash('success', 'Contact berhasil diperbarui!');
+        res.redirect('/contact');
+      });
     }
   }
 );
